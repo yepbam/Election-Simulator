@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Election Simulator</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    body {
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: white;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .settings {
+      padding: 15px;
+      border-bottom: 1px solid #ddd;
+    }
+    .settings h2 {
+      margin-top: 0;
+      font-size: 18px;
+    }
+    .form-row {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+    .form-group {
+      flex: 1;
+    }
+    .form-group label {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-control {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .btn-add {
+      background-color: #4CAF50;
+      color: white;
+      margin-right: 10px;
+    }
+    .btn-finalize {
+      background-color: #2196F3;
+      color: white;
+    }
+    .btn-edit {
+      background-color: #757575;
+      color: white;
+      margin-top: 15px;
+    }
+    .btn-remove {
+      background-color: #f44336;
+      color: white;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+    .winner-header {
+      padding: 15px;
+      color: white;
+    }
+    .winner-label {
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      color: white;
+    }
+    .checkmark {
+      margin-left: 8px;
+    }
+    .winner-headline {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 5px 0;
+      color: white;
+      font-family: Georgia, 'Times New Roman', Times, serif;
+      line-height: 1.3;
+      padding-right: 10px;
+    }
+    .race-called {
+      font-size: 12px;
+      color: white;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .results {
+      padding: 15px;
+    }
+    .date-info {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .vote-certified {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      text-align: right;
+      margin-bottom: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      text-align: left;
+      padding: 10px 5px;
+      border-bottom: 1px solid #ddd;
+      font-size: 14px;
+    }
+    td {
+      padding: 10px 5px;
+      border-bottom: 1px solid #ddd;
+    }
+    .candidate-photo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+      background-color: #ccc;
+    }
+    .candidate-info {
+      display: flex;
+      align-items: center;
+    }
+    .candidate-name {
+      font-weight: bold;
+    }
+    .text-right {
+      text-align: right;
+    }
+    .percent-value {
+      font-weight: bold;
+    }
+    .progress-bar {
+      height: 8px;
+      background-color: #f0f0f0;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+    }
+    .check-group {
+      margin-top: 5px;
+      display: flex;
+      gap: 10px;
+    }
+    .check-label {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+    .check-label input {
+      margin-right: 5px;
+    }
+    .bar-chart {
+      margin-top: 15px;
+      height: 30px;
+      border: 1px solid #ddd;
+      display: flex;
+      overflow: hidden;
+    }
+    .bar-section {
+      height: 100%;
+    }
+    .footnote {
+      font-size: 12px;
+      color: #666;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <!-- Settings Panel -->
+    <div class="settings" id="settings-panel">
+      <h2>Election Simulator Settings</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="election-name">Election Name:</label>
+          <input type="text" id="election-name" class="form-control" value="U.S. Senate seat in New York">
+        </div>
+        <div class="form-group">
+          <label for="election-date">Election Date:</label>
+          <input type="text" id="election-date" class="form-control" value="March 4">
+        </div>
+      </div>
+      <button id="add-candidate" class="btn btn-add">Add Candidate</button>
+      <button id="finalize" class="btn btn-finalize">Finalize Results</button>
+    </div>
+
+    <!-- Winner Header -->
+    <div id="winner-header" style="display: none;"></div>
+
+    <!-- Results Section -->
+    <div class="results">
+      <div class="date-info" id="date-display">Latest results from March 4</div>
+      
+      <table>
+        <thead>
+          <tr>
+            <th width="40%">Candidate</th>
+            <th width="20%">Party</th>
+            <th width="15%" class="text-right">Votes</th>
+            <th width="25%" class="text-right">Pct.</th>
+          </tr>
+        </thead>
+        <tbody id="candidates-table"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="2"><strong>Total reported</strong></td>
+            <td class="text-right" id="total-votes">0</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div id="incumbent-note" style="display: none;" class="footnote">*Incumbent</div>
+
+      <div id="bar-chart-container" style="display: none;">
+        <div class="bar-chart" id="bar-chart"></div>
+        <div class="footnote" id="votes-reported"></div>
+      </div>
+
+      <button id="edit-results" class="btn btn-edit" style="display: none;">Edit Results</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initial state
+      let candidates = [
+        { id: 1, name: 'John Doe', party: 'Liberal', votes: 4000000, incumbent: true, winner: false },
+        { id: 2, name: 'Jane Smith', party: 'Conventionalist', votes: 3000000, incumbent: false, winner: false },
+        { id: 3, name: 'Alex Johnson', party: 'Other', votes: 500000, incumbent: false, winner: false }
+      ];
+      let showUI = true;
+      let nextId = 4;
+
+      // DOM elements
+      const settingsPanel = document.getElementById('settings-panel');
+      const electionNameInput = document.getElementById('election-name');
+      const electionDateInput = document.getElementById('election-date');
+      const dateDisplay = document.getElementById('date-display');
+      const candidatesTable = document.getElementById('candidates-table');
+      const totalVotesElement = document.getElementById('total-votes');
+      const winnerHeader = document.getElementById('winner-header');
+      const incumbentNote = document.getElementById('incumbent-note');
+      const barChartContainer = document.getElementById('bar-chart-container');
+      const barChart = document.getElementById('bar-chart');
+      const votesReported = document.getElementById('votes-reported');
+      const addCandidateButton = document.getElementById('add-candidate');
+      const finalizeButton = document.getElementById('finalize');
+      const editResultsButton = document.getElementById('edit-results');
+
+      // Party colors
+      const partyColors = {
+        'Liberal': '#3E7DA9',
+        'Conventionalist': '#D87538',
+        'Other': '#9e9e9e'
+      };
+
+      // Initialize
+      renderCandidates();
+
+      // Event listeners
+      addCandidateButton.addEventListener('click', addCandidate);
+      finalizeButton.addEventListener('click', finalizeResults);
+      editResultsButton.addEventListener('click', editResults);
+      electionDateInput.addEventListener('input', updateDateDisplay);
+
+      // Functions
+      function renderCandidates() {
+        // Sort candidates by votes
+        candidates.sort((a, b) => b.votes - a.votes);
+        
+        // Calculate total votes
+        const totalVotes = candidates.reduce((sum, candidate) => sum + candidate.votes, 0);
+        totalVotesElement.textContent = formatNumber(totalVotes);
+        
+        // Update votes reported text with rounded values
+        votesReported.textContent = formatVotesReported(totalVotes);
+        
+        // Clear candidates table
+        candidatesTable.innerHTML = '';
+        
+        // Check if any candidate is an incumbent
+        const hasIncumbent = candidates.some(c => c.incumbent);
+        incumbentNote.style.display = hasIncumbent && !showUI ? 'block' : 'none';
+        
+        // Check if any candidate is a winner
+        const winner = candidates.find(c => c.winner);
+        if (winner) {
+          renderWinnerHeader(winner);
+        } else {
+          winnerHeader.style.display = 'none';
+        }
+        
+        // Render each candidate
+        candidates.forEach(candidate => {
+          const row = document.createElement('tr');
+          
+          // Calculate percentage
+          const percentage = totalVotes === 0 ? 0 : ((candidate.votes / totalVotes) * 100).toFixed(1);
+          
+          if (showUI) {
+            // Edit mode
+            row.innerHTML = `
+              <td>
+                <input type="text" class="form-control" value="${candidate.name}" 
+                  onchange="updateCandidate(${candidate.id}, 'name', this.value)">
+                <div class="check-group">
+                  <label class="check-label">
+                    <input type="checkbox" ${candidate.incumbent ? 'checked' : ''} 
+                      onchange="updateCandidate(${candidate.id}, 'incumbent', this.checked)">
+                    Incumbent
+                  </label>
+                  <label class="check-label">
+                    <input type="checkbox" ${candidate.winner ? 'checked' : ''} 
+                      onchange="toggleWinner(${candidate.id})">
+                    Winner
+                  </label>
+                </div>
+              </td>
+              <td>
+                <select class="form-control" onchange="updateCandidate(${candidate.id}, 'party', this.value)">
+                  <option value="Liberal" ${candidate.party === 'Liberal' ? 'selected' : ''}>Liberal</option>
+                  <option value="Conventionalist" ${candidate.party === 'Conventionalist' ? 'selected' : ''}>Conventionalist</option>
+                  <option value="Other" ${candidate.party === 'Other' ? 'selected' : ''}>Other</option>
+                </select>
+              </td>
+              <td class="text-right">
+                <input type="text" class="form-control" value="${candidate.votes}" 
+                  onchange="updateCandidate(${candidate.id}, 'votes', parseInt(this.value) || 0)">
+              </td>
+              <td class="text-right">
+                ${percentage}%
+                <button class="btn btn-remove" onclick="removeCandidate(${candidate.id})">Remove</button>
+              </td>
+            `;
+          } else {
+            // Display mode
+            const partyColor = partyColors[candidate.party];
+            row.innerHTML = `
+              <td>
+                <div class="candidate-info">
+                  <div class="candidate-photo" style="background-color: ${partyColor};"></div>
+                  <div>
+                    <span class="candidate-name">${candidate.name}</span>${candidate.incumbent ? '*' : ''}
+                    ${candidate.winner ? 
+                      `<svg class="checkmark" width="16" height="16" viewBox="0 0 24 24" fill="${partyColor}">
+                         <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                       </svg>` : ''}
+                  </div>
+                </div>
+              </td>
+              <td>${candidate.party}</td>
+              <td class="text-right">${formatNumber(candidate.votes)}</td>
+              <td class="text-right">
+                <span class="percent-value">${percentage}%</span>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${percentage}%; background-color: ${partyColor};"></div>
+                </div>
+              </td>
+            `;
+          }
+          
+          candidatesTable.appendChild(row);
+        });
+        
+        // Render bar chart when UI is hidden
+        if (!showUI) {
+          renderBarChart();
+        }
+      }
+
+      function renderWinnerHeader(winner) {
+        const partyColor = partyColors[winner.party];
+        const electionName = electionNameInput.value;
+        
+        winnerHeader.style.backgroundColor = partyColor;
+        winnerHeader.style.display = 'block';
+        winnerHeader.innerHTML = `
+          <div class="winner-label">
+            WINNER
+            <svg class="checkmark" width="20" height="20" viewBox="0 0 24 24" fill="white">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+          </div>
+          <div class="winner-headline">
+            ${winner.name}, a ${winner.party}, wins the ${electionName}.
+          </div>
+          <div class="race-called">
+            Race called by The Report.
+          </div>
+        `;
+      }
+
+      function renderBarChart() {
+        barChartContainer.style.display = 'block';
+        barChart.innerHTML = '';
+        
+        const totalVotes = candidates.reduce((sum, candidate) => sum + candidate.votes, 0);
+        
+        candidates.forEach(candidate => {
+          const percentage = totalVotes === 0 ? 0 : ((candidate.votes / totalVotes) * 100);
+          const barSection = document.createElement('div');
+          barSection.className = 'bar-section';
+          barSection.style.width = `${percentage}%`;
+          barSection.style.backgroundColor = partyColors[candidate.party];
+          barChart.appendChild(barSection);
+        });
+      }
+
+      function formatVotesReported(totalVotes) {
+        if (totalVotes >= 1000000) {
+          // For millions, round down to nearest hundred thousand
+          const millions = Math.floor(totalVotes / 100000) / 10;
+          return `More than ${millions.toFixed(1)} million votes reported`;
+        } else if (totalVotes >= 10000) {
+          // For thousands, round down to nearest 10k
+          const thousands = Math.floor(totalVotes / 10000) * 10;
+          return `More than ${thousands}k votes reported`;
+        } else if (totalVotes >= 1000) {
+          // For smaller thousands
+          const thousands = Math.floor(totalVotes / 1000);
+          return `More than ${thousands}k votes reported`;
+        } else {
+          // For smaller numbers
+          return `${totalVotes} votes reported`;
+        }
+      }
+
+      function addCandidate() {
+        candidates.push({
+          id: nextId++,
+          name: 'New Candidate',
+          party: 'Liberal',
+          votes: 0,
+          incumbent: false,
+          winner: false
+        });
+        renderCandidates();
+      }
+
+      function updateCandidate(id, field, value) {
+        candidates = candidates.map(candidate => 
+          candidate.id === id ? { ...candidate, [field]: value } : candidate
+        );
+        renderCandidates();
+      }
+
+      function toggleWinner(id) {
+        const isCurrentlyWinner = candidates.find(c => c.id === id).winner;
+        
+        candidates = candidates.map(candidate => {
+          if (candidate.id === id) {
+            return { ...candidate, winner: !isCurrentlyWinner };
+          } else if (!isCurrentlyWinner) {
+            // If setting a new winner, unset all others
+            return { ...candidate, winner: false };
+          }
+          return candidate;
+        });
+        
+        renderCandidates();
+      }
+
+      function removeCandidate(id) {
+        candidates = candidates.filter(candidate => candidate.id !== id);
+        renderCandidates();
+      }
+
+      function finalizeResults() {
+        showUI = false;
+        settingsPanel.style.display = 'none';
+        editResultsButton.style.display = 'block';
+        renderCandidates();
+      }
+
+      function editResults() {
+        showUI = true;
+        settingsPanel.style.display = 'block';
+        editResultsButton.style.display = 'none';
+        barChartContainer.style.display = 'none';
+        renderCandidates();
+      }
+
+      function updateDateDisplay() {
+        dateDisplay.textContent = `Latest results from ${electionDateInput.value}`;
+      }
+
+      function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      // Make functions available globally
+      window.updateCandidate = updateCandidate;
+      window.toggleWinner = toggleWinner;
+      window.removeCandidate = removeCandidate;
+    });
+  </script>
+</body>
+</html>
