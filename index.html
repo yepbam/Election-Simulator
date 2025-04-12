@@ -285,6 +285,7 @@
       const partyColors = {
         'Liberal': '#3E7DA9',
         'Conventionalist': '#D87538',
+        'Independent': '#DAA520', // Gold/yellow color for Independent
         'Other': '#9e9e9e'
       };
 
@@ -354,6 +355,7 @@
                 <select class="form-control" onchange="updateCandidate(${candidate.id}, 'party', this.value)">
                   <option value="Liberal" ${candidate.party === 'Liberal' ? 'selected' : ''}>Liberal</option>
                   <option value="Conventionalist" ${candidate.party === 'Conventionalist' ? 'selected' : ''}>Conventionalist</option>
+                  <option value="Independent" ${candidate.party === 'Independent' ? 'selected' : ''}>Independent</option>
                   <option value="Other" ${candidate.party === 'Other' ? 'selected' : ''}>Other</option>
                 </select>
               </td>
@@ -406,6 +408,14 @@
         const partyColor = partyColors[winner.party];
         const electionName = electionNameInput.value;
         
+        // Determine article based on party name
+        let partyDescription;
+        if (winner.party === "Independent") {
+          partyDescription = "an Independent";
+        } else {
+          partyDescription = "a " + winner.party;
+        }
+        
         winnerHeader.style.backgroundColor = partyColor;
         winnerHeader.style.display = 'block';
         winnerHeader.innerHTML = `
@@ -416,7 +426,7 @@
             </svg>
           </div>
           <div class="winner-headline">
-            ${winner.name}, a ${winner.party}, wins the ${electionName}.
+            ${winner.name}, ${partyDescription}, wins the ${electionName}.
           </div>
           <div class="race-called">
             Race called by The Report.
