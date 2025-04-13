@@ -81,6 +81,7 @@
     .winner-header {
       padding: 15px;
       color: white;
+      position: relative;
     }
     .winner-label {
       font-size: 14px;
@@ -109,11 +110,19 @@
     }
     .results {
       padding: 15px;
+      position: relative;
     }
     .date-info {
       font-size: 14px;
       color: #666;
       margin-bottom: 15px;
+    }
+    .reporting-info {
+      font-size: 14px;
+      color: #666;
+      position: absolute;
+      top: 15px;
+      right: 15px;
     }
     .vote-certified {
       font-size: 14px;
@@ -196,6 +205,15 @@
       color: #666;
       margin-top: 10px;
     }
+    .vote-lead {
+      font-size: 12px;
+      color: #666;
+      display: block;
+      margin-top: 2px;
+    }
+    .reporting-settings {
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
@@ -213,6 +231,12 @@
           <input type="text" id="election-date" class="form-control" value="March 4">
         </div>
       </div>
+      <div class="form-row reporting-settings">
+        <div class="form-group">
+          <label for="reporting-percentage">Estimated Reporting (%):</label>
+          <input type="number" id="reporting-percentage" class="form-control" value="85" min="0" max="100">
+        </div>
+      </div>
       <button id="add-candidate" class="btn btn-add">Add Candidate</button>
       <button id="finalize" class="btn btn-finalize">Finalize Results</button>
     </div>
@@ -223,6 +247,7 @@
     <!-- Results Section -->
     <div class="results">
       <div class="date-info" id="date-display">Latest results from March 4</div>
+      <div class="reporting-info" id="reporting-display">Est. 85% reporting</div>
       
       <table>
         <thead>
@@ -264,12 +289,15 @@
       ];
       let showUI = true;
       let nextId = 4;
+      let reportingPercentage = 85;
 
       // DOM elements
       const settingsPanel = document.getElementById('settings-panel');
       const electionNameInput = document.getElementById('election-name');
       const electionDateInput = document.getElementById('election-date');
+      const reportingPercentageInput = document.getElementById('reporting-percentage');
       const dateDisplay = document.getElementById('date-display');
+      const reportingDisplay = document.getElementById('reporting-display');
       const candidatesTable = document.getElementById('candidates-table');
       const totalVotesElement = document.getElementById('total-votes');
       const winnerHeader = document.getElementById('winner-header');
@@ -291,12 +319,14 @@
 
       // Initialize
       renderCandidates();
+      updateReportingDisplay();
 
       // Event listeners
       addCandidateButton.addEventListener('click', addCandidate);
       finalizeButton.addEventListener('click', finalizeResults);
       editResultsButton.addEventListener('click', editResults);
       electionDateInput.addEventListener('input', updateDateDisplay);
+      reportingPercentageInput.addEventListener('input', updateReportingPercentage);
 
       // Functions
       function renderCandidates() {
@@ -326,11 +356,18 @@
         }
         
         // Render each candidate
-        candidates.forEach(candidate => {
+        candidates.forEach((candidate, index) => {
           const row = document.createElement('tr');
           
           // Calculate percentage
           const percentage = totalVotes === 0 ? 0 : ((candidate.votes / totalVotes) * 100).toFixed(1);
+          
+          // Calculate vote lead if this is the first place candidate
+          let voteLead = '';
+          if (index === 0 && candidates.length > 1) {
+            const leadAmount = candidate.votes - candidates[1].votes;
+            voteLead = `<span class="vote-lead">${formatNumber(leadAmount)} votes ahead</span>`;
+          }
           
           if (showUI) {
             // Edit mode
@@ -385,7 +422,10 @@
                 </div>
               </td>
               <td>${candidate.party}</td>
-              <td class="text-right">${formatNumber(candidate.votes)}</td>
+              <td class="text-right">
+                ${formatNumber(candidate.votes)}
+                ${voteLead}
+              </td>
               <td class="text-right">
                 <span class="percent-value">${percentage}%</span>
                 <div class="progress-bar">
@@ -526,6 +566,22 @@
 
       function updateDateDisplay() {
         dateDisplay.textContent = `Latest results from ${electionDateInput.value}`;
+      }
+
+      function updateReportingPercentage() {
+        reportingPercentage = parseInt(reportingPercentageInput.value) || 0;
+        
+        // Ensure percentage is in valid range
+        if (reportingPercentage < 0) reportingPercentage = 0;
+        if (reportingPercentage > 100) reportingPercentage = 100;
+        
+        // Update UI
+        reportingPercentageInput.value = reportingPercentage;
+        updateReportingDisplay();
+      }
+
+      function updateReportingDisplay() {
+        reportingDisplay.textContent = `Est. ${reportingPercentage}% reporting`;
       }
 
       function formatNumber(num) {
