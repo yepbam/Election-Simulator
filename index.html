@@ -79,34 +79,37 @@
       font-size: 12px;
     }
     .winner-header {
-      padding: 15px;
-      color: white;
-      position: relative;
-    }
-    .winner-label {
-      font-size: 14px;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      color: white;
-    }
-    .checkmark {
+  padding: 25px;
+  color: white;
+  position: relative;
+  margin-bottom: 15px;
+}
+.winner-label {
+  font-size: 14px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  color: white;
+  margin-bottom: 10px;
+}
+.checkmark {
       margin-left: 8px;
     }
     .winner-headline {
-      font-size: 22px;
-      font-weight: bold;
-      margin: 5px 0;
-      color: white;
-      font-family: Georgia, 'Times New Roman', Times, serif;
-      line-height: 1.3;
-      padding-right: 10px;
-    }
-    .race-called {
-      font-size: 12px;
-      color: white;
-      margin-top: 8px;
-    }
+  font-size: 22px;
+  font-weight: bold;
+  margin: 12px 0;
+  color: white;
+  font-family: 'Cheltenham Bold', Georgia, 'Times New Roman', Times, serif;
+  line-height: 1.3;
+  padding-right: 10px;
+}
+.race-called {
+  font-size: 12px;
+  color: white;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
     .results {
       padding: 15px;
       position: relative;
@@ -213,6 +216,13 @@
     .reporting-settings {
       margin-top: 15px;
     }
+
+    @font-face {
+  font-family: 'Cheltenham Bold';
+  src: url('CheltenhamStdBold.otf') format('opentype');
+  font-weight: bold;
+  font-style: normal;
+}
   </style>
 </head>
 <body>
@@ -444,34 +454,38 @@
       }
 
       function renderWinnerHeader(winner) {
-        const partyColor = partyColors[winner.party];
-        const electionName = electionNameInput.value;
-        
-        // Determine article based on party name
-        let partyDescription;
-        if (winner.party === "Independent") {
-          partyDescription = "an Independent";
-        } else {
-          partyDescription = "a " + winner.party;
-        }
-        
-        winnerHeader.style.backgroundColor = partyColor;
-        winnerHeader.style.display = 'block';
-        winnerHeader.innerHTML = `
-          <div class="winner-label">
-            WINNER
-            <svg class="checkmark" width="20" height="20" viewBox="0 0 24 24" fill="white">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-            </svg>
-          </div>
-          <div class="winner-headline">
-            ${winner.name}, ${partyDescription}, wins the ${electionName}.
-          </div>
-          <div class="race-called">
-            Race called by The Report.
-          </div>
-        `;
-      }
+  const partyColor = partyColors[winner.party];
+  const electionName = electionNameInput.value;
+  
+  // Determine article based on party name
+  let partyDescription;
+  if (winner.party === "Independent") {
+    partyDescription = "an Independent";
+  } else {
+    partyDescription = "a " + winner.party;
+  }
+  
+  // Apply styles directly to the header
+  winnerHeader.style.backgroundColor = partyColor;
+  winnerHeader.style.display = 'block';
+  winnerHeader.style.padding = '15px'; // Add more padding
+  winnerHeader.style.marginBottom = '15px'; // Add margin below
+  
+  winnerHeader.innerHTML = `
+    <div class="winner-label" style="margin-bottom: 12px; font-size: 14px; font-weight: bold; display: flex; align-items: center; color: white;">
+      WINNER
+      <svg class="checkmark" width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-left: 8px;">
+        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+      </svg>
+    </div>
+    <div style="font-size: 22px; font-weight: bold; margin: 12px 0; color: white; font-family: 'Cheltenham Bold', Georgia, 'Times New Roman', Times, serif; line-height: 1.3; padding-right: 15px;">
+      ${winner.name}, ${partyDescription}, wins the ${electionName}.
+    </div>
+    <div style="font-size: 12px; color: white; margin-top: 12px; margin-bottom: 5px;">
+      Race called by The Report.
+    </div>
+  `;
+}
 
       function renderBarChart() {
         barChartContainer.style.display = 'block';
