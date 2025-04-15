@@ -106,7 +106,6 @@
       font-size: 12px;
       color: white;
       margin-top: 8px;
-      font-style: italic;
     }
     .results {
       padding: 15px;
@@ -247,7 +246,7 @@
     <!-- Results Section -->
     <div class="results">
       <div class="date-info" id="date-display">Latest results from March 4</div>
-      <div class="reporting-info" id="reporting-display">Est. 85% reporting</div>
+      <div class="reporting-info" id="reporting-display">85% of votes in</div>
       
       <table>
         <thead>
@@ -581,7 +580,7 @@
       }
 
       function updateReportingDisplay() {
-        reportingDisplay.textContent = `Est. ${reportingPercentage}% reporting`;
+        reportingDisplay.textContent = `${reportingPercentage}% of votes in`;
       }
 
       function formatNumber(num) {
