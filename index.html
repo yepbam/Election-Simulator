@@ -78,38 +78,52 @@
       padding: 4px 8px;
       font-size: 12px;
     }
+    .btn-save {
+      background-color: #ff9800;
+      color: white;
+      margin-left: 10px;
+    }
+    .btn-search {
+      background-color: #9c27b0;
+      color: white;
+    }
+    .btn-home {
+      background-color: #607d8b;
+      color: white;
+      margin-right: 10px;
+    }
     .winner-header {
-  padding: 25px;
-  color: white;
-  position: relative;
-  margin-bottom: 15px;
-}
-.winner-label {
-  font-size: 14px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  color: white;
-  margin-bottom: 10px;
-}
-.checkmark {
+      padding: 25px;
+      color: white;
+      position: relative;
+      margin-bottom: 15px;
+    }
+    .winner-label {
+      font-size: 14px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      color: white;
+      margin-bottom: 10px;
+    }
+    .checkmark {
       margin-left: 8px;
     }
     .winner-headline {
-  font-size: 22px;
-  font-weight: bold;
-  margin: 12px 0;
-  color: white;
-  font-family: 'Cheltenham Bold', Georgia, 'Times New Roman', Times, serif;
-  line-height: 1.3;
-  padding-right: 10px;
-}
-.race-called {
-  font-size: 12px;
-  color: white;
-  margin-top: 10px;
-  margin-bottom: 5px;
-}
+      font-size: 22px;
+      font-weight: bold;
+      margin: 12px 0;
+      color: white;
+      font-family: 'Cheltenham Bold', Georgia, 'Times New Roman', Times, serif;
+      line-height: 1.3;
+      padding-right: 10px;
+    }
+    .race-called {
+      font-size: 12px;
+      color: white;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
     .results {
       padding: 15px;
       position: relative;
@@ -216,79 +230,290 @@
     .reporting-settings {
       margin-top: 15px;
     }
+    .auth-container {
+      text-align: right;
+      padding: 10px;
+      background-color: #f9f9f9;
+      border-bottom: 1px solid #ddd;
+    }
+    .saved-elections {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .saved-election-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+    .saved-election-item:hover {
+      background-color: #f9f9f9;
+    }
+    .search-container {
+      margin-bottom: 15px;
+    }
+    .tab-container {
+      display: flex;
+      border-bottom: 1px solid #ddd;
+    }
+    .tab {
+      padding: 10px 15px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-bottom: none;
+    }
+    .tab.active {
+      background-color: white;
+      border-color: #ddd;
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+      margin-bottom: -1px;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.4);
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 4px;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: black;
+    }
 
     @font-face {
-  font-family: 'Cheltenham Bold';
-  src: url('CheltenhamStdBold.otf') format('opentype');
-  font-weight: bold;
-  font-style: normal;
-}
+      font-family: 'Cheltenham Bold';
+      src: url('CheltenhamStdBold.otf') format('opentype');
+      font-weight: bold;
+      font-style: normal;
+    }
   </style>
 </head>
 <body>
-  <div class="container" id="app">
-    <!-- Settings Panel -->
-    <div class="settings" id="settings-panel">
-      <h2>Election Simulator Settings</h2>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="election-name">Election Name:</label>
-          <input type="text" id="election-name" class="form-control" value="U.S. Senate seat in New York">
-        </div>
-        <div class="form-group">
-          <label for="election-date">Election Date:</label>
-          <input type="text" id="election-date" class="form-control" value="March 4">
-        </div>
-      </div>
-      <div class="form-row reporting-settings">
-        <div class="form-group">
-          <label for="reporting-percentage">Estimated Reporting (%):</label>
-          <input type="number" id="reporting-percentage" class="form-control" value="85" min="0" max="100">
-        </div>
-      </div>
-      <button id="add-candidate" class="btn btn-add">Add Candidate</button>
-      <button id="finalize" class="btn btn-finalize">Finalize Results</button>
+  <!-- Auth Section -->
+  <div class="auth-container" id="auth-container">
+    <div id="user-info" style="display: none;">
+      <span id="user-email"></span>
+      <button id="logout-btn" class="btn">Logout</button>
     </div>
-
-    <!-- Winner Header -->
-    <div id="winner-header" style="display: none;"></div>
-
-    <!-- Results Section -->
-    <div class="results">
-      <div class="date-info" id="date-display">Latest results from March 4</div>
-      <div class="reporting-info" id="reporting-display">85% of votes in</div>
-      
-      <table>
-        <thead>
-          <tr>
-            <th width="40%">Candidate</th>
-            <th width="20%">Party</th>
-            <th width="15%" class="text-right">Votes</th>
-            <th width="25%" class="text-right">Pct.</th>
-          </tr>
-        </thead>
-        <tbody id="candidates-table"></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="2"><strong>Total reported</strong></td>
-            <td class="text-right" id="total-votes">0</td>
-            <td></td>
-          </tr>
-        </tfoot>
-      </table>
-
-      <div id="incumbent-note" style="display: none;" class="footnote">*Incumbent</div>
-
-      <div id="bar-chart-container" style="display: none;">
-        <div class="bar-chart" id="bar-chart"></div>
-        <div class="footnote" id="votes-reported"></div>
-      </div>
-
-      <button id="edit-results" class="btn btn-edit" style="display: none;">Edit Results</button>
+    <div id="login-prompt" style="display: none;">
+      <button id="login-btn" class="btn">Login</button>
+      <button id="signup-btn" class="btn">Sign Up</button>
     </div>
   </div>
 
+  <!-- Tab Navigation -->
+  <div class="tab-container">
+    <div class="tab active" id="simulator-tab">Simulator</div>
+    <div class="tab" id="library-tab">My Elections</div>
+    <div class="tab" id="search-tab">Search</div>
+  </div>
+  
+  <!-- Main Container -->
+  <div id="main-content">
+    <!-- Simulator Section -->
+    <div id="simulator-section">
+      <div class="container" id="app">
+        <!-- Settings Panel -->
+        <div class="settings" id="settings-panel">
+          <h2>Election Simulator Settings</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="election-name">Election Name:</label>
+              <input type="text" id="election-name" class="form-control" value="U.S. Senate seat in New York">
+            </div>
+            <div class="form-group">
+              <label for="election-date">Election Date:</label>
+              <input type="text" id="election-date" class="form-control" value="March 4">
+            </div>
+          </div>
+          <div class="form-row reporting-settings">
+            <div class="form-group">
+              <label for="reporting-percentage">Estimated Reporting (%):</label>
+              <input type="number" id="reporting-percentage" class="form-control" value="85" min="0" max="100">
+            </div>
+          </div>
+          <button id="add-candidate" class="btn btn-add">Add Candidate</button>
+          <button id="finalize" class="btn btn-finalize">Finalize Results</button>
+        </div>
+
+        <!-- Winner Header -->
+        <div id="winner-header" style="display: none;"></div>
+
+        <!-- Results Section -->
+        <div class="results">
+          <div class="date-info" id="date-display">Latest results from March 4</div>
+          <div class="reporting-info" id="reporting-display">85% of votes in</div>
+          
+          <table>
+            <thead>
+              <tr>
+                <th width="40%">Candidate</th>
+                <th width="20%">Party</th>
+                <th width="15%" class="text-right">Votes</th>
+                <th width="25%" class="text-right">Pct.</th>
+              </tr>
+            </thead>
+            <tbody id="candidates-table"></tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2"><strong>Total reported</strong></td>
+                <td class="text-right" id="total-votes">0</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div id="incumbent-note" style="display: none;" class="footnote">*Incumbent</div>
+
+          <div id="bar-chart-container" style="display: none;">
+            <div class="bar-chart" id="bar-chart"></div>
+            <div class="footnote" id="votes-reported"></div>
+          </div>
+
+          <button id="edit-results" class="btn btn-edit" style="display: none;">Edit Results</button>
+          <button id="save-election" class="btn btn-save" style="display: none;">Save Election</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Library Section -->
+    <div id="library-section" style="display: none;">
+      <div class="container">
+        <div class="settings">
+          <h2>My Saved Elections</h2>
+        </div>
+        <div class="results">
+          <div id="my-elections-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Section -->
+    <div id="search-section" style="display: none;">
+      <div class="container">
+        <div class="settings">
+          <h2>Search Elections</h2>
+          <div class="search-container">
+            <div class="form-row">
+              <div class="form-group">
+                <input type="text" id="search-input" class="form-control" placeholder="Search by election name or candidate">
+              </div>
+              <button id="search-button" class="btn btn-search">Search</button>
+            </div>
+          </div>
+        </div>
+        <div class="results">
+          <div id="search-results"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Login</h2>
+      <div class="form-group">
+        <label for="login-email">Email:</label>
+        <input type="email" id="login-email" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password:</label>
+        <input type="password" id="login-password" class="form-control">
+      </div>
+      <button id="submit-login" class="btn btn-finalize">Login</button>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div id="signup-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Sign Up</h2>
+      <div class="form-group">
+        <label for="signup-email">Email:</label>
+        <input type="email" id="signup-email" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password:</label>
+        <input type="password" id="signup-password" class="form-control">
+      </div>
+      <button id="submit-signup" class="btn btn-finalize">Sign Up</button>
+    </div>
+  </div>
+
+  <!-- Save Election Modal -->
+  <div id="save-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2>Save Election</h2>
+      <div class="form-group">
+        <label for="election-title">Election Title:</label>
+        <input type="text" id="election-title" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="election-description">Description (optional):</label>
+        <textarea id="election-description" class="form-control" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="election-public">
+          <input type="checkbox" id="election-public"> Make this election public (others can search and view it)
+        </label>
+      </div>
+      <button id="submit-save" class="btn btn-save">Save</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+
+  <!-- Application JS -->
   <script>
+    // Firebase configuration
+    const firebaseConfig = {
+  apiKey: "AIzaSyC9ZxYMhfMwToAF3-2XX8U0uL1_P2kCkek",
+  authDomain: "election-simulator-4428d.firebaseapp.com",
+  projectId: "election-simulator-4428d",
+  storageBucket: "election-simulator-4428d.firebasestorage.app",
+  messagingSenderId: "571223789022",
+  appId: "1:571223789022:web:ada9865f0ba7b117ac614f",
+  measurementId: "G-GY1QZ20BVD"
+};
+
+
+    // Initialize Firebase if configuration is available
+    let db, auth;
+    if (firebaseConfig.apiKey) {
+      firebase.initializeApp(firebaseConfig);
+      db = firebase.firestore();
+      auth = firebase.auth();
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
       // Initial state
       let candidates = [
@@ -299,6 +524,7 @@
       let showUI = true;
       let nextId = 4;
       let reportingPercentage = 85;
+      let currentElectionId = null;
 
       // DOM elements
       const settingsPanel = document.getElementById('settings-panel');
@@ -317,6 +543,46 @@
       const addCandidateButton = document.getElementById('add-candidate');
       const finalizeButton = document.getElementById('finalize');
       const editResultsButton = document.getElementById('edit-results');
+      const saveElectionButton = document.getElementById('save-election');
+
+      // Auth elements
+      const authContainer = document.getElementById('auth-container');
+      const userInfo = document.getElementById('user-info');
+      const userEmail = document.getElementById('user-email');
+      const loginPrompt = document.getElementById('login-prompt');
+      const loginBtn = document.getElementById('login-btn');
+      const signupBtn = document.getElementById('signup-btn');
+      const logoutBtn = document.getElementById('logout-btn');
+
+      // Tab elements
+      const simulatorTab = document.getElementById('simulator-tab');
+      const libraryTab = document.getElementById('library-tab');
+      const searchTab = document.getElementById('search-tab');
+      const simulatorSection = document.getElementById('simulator-section');
+      const librarySection = document.getElementById('library-section');
+      const searchSection = document.getElementById('search-section');
+
+      // Modal elements
+      const loginModal = document.getElementById('login-modal');
+      const signupModal = document.getElementById('signup-modal');
+      const saveModal = document.getElementById('save-modal');
+      const closeButtons = document.querySelectorAll('.close');
+      const submitLogin = document.getElementById('submit-login');
+      const submitSignup = document.getElementById('submit-signup');
+      const submitSave = document.getElementById('submit-save');
+      const loginEmail = document.getElementById('login-email');
+      const loginPassword = document.getElementById('login-password');
+      const signupEmail = document.getElementById('signup-email');
+      const signupPassword = document.getElementById('signup-password');
+      const electionTitle = document.getElementById('election-title');
+      const electionDescription = document.getElementById('election-description');
+      const electionPublic = document.getElementById('election-public');
+
+      // Search elements
+      const searchInput = document.getElementById('search-input');
+      const searchButton = document.getElementById('search-button');
+      const searchResults = document.getElementById('search-results');
+      const myElectionsList = document.getElementById('my-elections-list');
 
       // Party colors
       const partyColors = {
@@ -329,13 +595,41 @@
       // Initialize
       renderCandidates();
       updateReportingDisplay();
+      initializeAuth();
 
       // Event listeners
       addCandidateButton.addEventListener('click', addCandidate);
       finalizeButton.addEventListener('click', finalizeResults);
       editResultsButton.addEventListener('click', editResults);
+      saveElectionButton.addEventListener('click', openSaveModal);
       electionDateInput.addEventListener('input', updateDateDisplay);
       reportingPercentageInput.addEventListener('input', updateReportingPercentage);
+
+      // Auth listeners
+      loginBtn.addEventListener('click', () => openModal(loginModal));
+      signupBtn.addEventListener('click', () => openModal(signupModal));
+      logoutBtn.addEventListener('click', logout);
+      submitLogin.addEventListener('click', login);
+      submitSignup.addEventListener('click', signup);
+      submitSave.addEventListener('click', saveElection);
+
+      // Tab listeners
+      simulatorTab.addEventListener('click', () => switchTab(simulatorTab, simulatorSection));
+      libraryTab.addEventListener('click', () => {
+        switchTab(libraryTab, librarySection);
+        loadUserElections();
+      });
+      searchTab.addEventListener('click', () => switchTab(searchTab, searchSection));
+
+      // Close modals
+      closeButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+          e.target.closest('.modal').style.display = 'none';
+        });
+      });
+
+      // Search functionality
+      searchButton.addEventListener('click', searchElections);
 
       // Functions
       function renderCandidates() {
@@ -454,38 +748,38 @@
       }
 
       function renderWinnerHeader(winner) {
-  const partyColor = partyColors[winner.party];
-  const electionName = electionNameInput.value;
-  
-  // Determine article based on party name
-  let partyDescription;
-  if (winner.party === "Independent") {
-    partyDescription = "an Independent";
-  } else {
-    partyDescription = "a " + winner.party;
-  }
-  
-  // Apply styles directly to the header
-  winnerHeader.style.backgroundColor = partyColor;
-  winnerHeader.style.display = 'block';
-  winnerHeader.style.padding = '15px'; // Add more padding
-  winnerHeader.style.marginBottom = '15px'; // Add margin below
-  
-  winnerHeader.innerHTML = `
-    <div class="winner-label" style="margin-bottom: 12px; font-size: 14px; font-weight: bold; display: flex; align-items: center; color: white;">
-      WINNER
-      <svg class="checkmark" width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-left: 8px;">
-        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
-      </svg>
-    </div>
-    <div style="font-size: 22px; font-weight: bold; margin: 12px 0; color: white; font-family: 'Cheltenham Bold', Georgia, 'Times New Roman', Times, serif; line-height: 1.3; padding-right: 15px;">
-      ${winner.name}, ${partyDescription}, wins the ${electionName}.
-    </div>
-    <div style="font-size: 12px; color: white; margin-top: 12px; margin-bottom: 5px;">
-      Race called by The Report.
-    </div>
-  `;
-}
+        const partyColor = partyColors[winner.party];
+        const electionName = electionNameInput.value;
+        
+        // Determine article based on party name
+        let partyDescription;
+        if (winner.party === "Independent") {
+          partyDescription = "an Independent";
+        } else {
+          partyDescription = "a " + winner.party;
+        }
+        
+        // Apply styles directly to the header
+        winnerHeader.style.backgroundColor = partyColor;
+        winnerHeader.style.display = 'block';
+        winnerHeader.style.padding = '15px';
+        winnerHeader.style.marginBottom = '15px';
+        
+        winnerHeader.innerHTML = `
+          <div class="winner-label" style="margin-bottom: 12px; font-size: 14px; font-weight: bold; display: flex; align-items: center; color: white;">
+            WINNER
+            <svg class="checkmark" width="20" height="20" viewBox="0 0 24 24" fill="white" style="margin-left: 8px;">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+            </svg>
+          </div>
+          <div style="font-size: 22px; font-weight: bold; margin: 12px 0; color: white; font-family: 'Cheltenham Bold', Georgia, 'Times New Roman', Times, serif; line-height: 1.3; padding-right: 15px;">
+            ${winner.name}, ${partyDescription}, wins the ${electionName}.
+          </div>
+          <div style="font-size: 12px; color: white; margin-top: 12px; margin-bottom: 5px;">
+            Race called by The Report.
+          </div>
+        `;
+      }
 
       function renderBarChart() {
         barChartContainer.style.display = 'block';
@@ -566,6 +860,7 @@
         showUI = false;
         settingsPanel.style.display = 'none';
         editResultsButton.style.display = 'block';
+        saveElectionButton.style.display = auth?.currentUser ? 'inline-block' : 'none';
         renderCandidates();
       }
 
@@ -573,6 +868,7 @@
         showUI = true;
         settingsPanel.style.display = 'block';
         editResultsButton.style.display = 'none';
+        saveElectionButton.style.display = 'none';
         barChartContainer.style.display = 'none';
         renderCandidates();
       }
@@ -601,10 +897,349 @@
         return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       }
 
+      // Firebase Auth functions
+      function initializeAuth() {
+        if (!auth) {
+          // Hide auth container if Firebase isn't configured
+          authContainer.style.display = 'none';
+          return;
+        }
+
+        // Listen for auth state changes
+        auth.onAuthStateChanged(user => {
+          if (user) {
+            // User is signed in
+            loginPrompt.style.display = 'none';
+            userInfo.style.display = 'block';
+            userEmail.textContent = user.email;
+            saveElectionButton.style.display = !showUI ? 'inline-block' : 'none';
+          } else {
+            // User is signed out
+            loginPrompt.style.display = 'block';
+            userInfo.style.display = 'none';
+            saveElectionButton.style.display = 'none';
+          }
+        });
+      }
+
+      function login() {
+        const email = loginEmail.value;
+        const password = loginPassword.value;
+
+        if (!email || !password) {
+          alert('Please enter email and password');
+          return;
+        }
+
+        auth.signInWithEmailAndPassword(email, password)
+          .then(() => {
+            loginModal.style.display = 'none';
+            loginEmail.value = '';
+            loginPassword.value = '';
+          })
+          .catch(error => {
+            alert('Login failed: ' + error.message);
+          });
+      }
+
+      function signup() {
+        const email = signupEmail.value;
+        const password = signupPassword.value;
+
+        if (!email || !password) {
+          alert('Please enter email and password');
+          return;
+        }
+
+        if (password.length < 6) {
+          alert('Password should be at least 6 characters');
+          return;
+        }
+
+        auth.createUserWithEmailAndPassword(email, password)
+          .then(() => {
+            signupModal.style.display = 'none';
+            signupEmail.value = '';
+            signupPassword.value = '';
+          })
+          .catch(error => {
+            alert('Signup failed: ' + error.message);
+          });
+      }
+
+      function logout() {
+        auth.signOut()
+          .catch(error => {
+            alert('Logout failed: ' + error.message);
+          });
+      }
+
+      // Modal functions
+      function openModal(modal) {
+        modal.style.display = 'block';
+      }
+
+      function openSaveModal() {
+        if (!auth?.currentUser) {
+          alert('Please login to save elections');
+          return;
+        }
+
+        electionTitle.value = electionNameInput.value;
+        electionDescription.value = '';
+        electionPublic.checked = false;
+        openModal(saveModal);
+      }
+
+      // Save election to Firebase
+      function saveElection() {
+        if (!db || !auth?.currentUser) {
+          alert('Firebase not configured or user not logged in');
+          return;
+        }
+
+        const title = electionTitle.value.trim();
+        if (!title) {
+          alert('Please enter a title for your election');
+          return;
+        }
+
+        // Prepare election data
+        const electionData = {
+          title: title,
+          description: electionDescription.value.trim(),
+          electionName: electionNameInput.value,
+          electionDate: electionDateInput.value,
+          reportingPercentage: reportingPercentage,
+          candidates: candidates,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          userId: auth.currentUser.uid,
+          userEmail: auth.currentUser.email,
+          isPublic: electionPublic.checked
+        };
+
+        // Save to Firestore
+        let savePromise;
+        if (currentElectionId) {
+          // Update existing election
+          savePromise = db.collection('elections').doc(currentElectionId).update(electionData);
+        } else {
+          // Create new election
+          savePromise = db.collection('elections').add(electionData);
+        }
+
+        savePromise
+          .then((docRef) => {
+            if (!currentElectionId && docRef) {
+              currentElectionId = docRef.id;
+            }
+            saveModal.style.display = 'none';
+            alert('Election saved successfully!');
+          })
+          .catch(error => {
+            alert('Error saving election: ' + error.message);
+          });
+      }
+
+      // Load user's elections
+      function loadUserElections() {
+        if (!db || !auth?.currentUser) {
+          myElectionsList.innerHTML = '<p>Please login to view your saved elections</p>';
+          return;
+        }
+
+        myElectionsList.innerHTML = '<p>Loading your elections...</p>';
+
+        db.collection('elections')
+          .where('userId', '==', auth.currentUser.uid)
+          .orderBy('createdAt', 'desc')
+          .get()
+          .then(snapshot => {
+            if (snapshot.empty) {
+              myElectionsList.innerHTML = '<p>You have no saved elections</p>';
+              return;
+            }
+
+            myElectionsList.innerHTML = '';
+            snapshot.forEach(doc => {
+              const election = doc.data();
+              const electionItem = document.createElement('div');
+              electionItem.className = 'saved-election-item';
+              electionItem.innerHTML = `
+                <h3>${election.title}</h3>
+                <p>${election.electionName} - ${election.electionDate}</p>
+                <p>Reporting: ${election.reportingPercentage}%</p>
+                <button class="btn btn-finalize" onclick="loadElection('${doc.id}')">Open</button>
+                <button class="btn btn-remove" onclick="deleteElection('${doc.id}')">Delete</button>
+              `;
+              myElectionsList.appendChild(electionItem);
+            });
+          })
+          .catch(error => {
+            myElectionsList.innerHTML = `<p>Error loading elections: ${error.message}</p>`;
+          });
+      }
+
+      // Load a specific election
+      function loadElection(electionId) {
+        if (!db) return;
+
+        db.collection('elections').doc(electionId).get()
+          .then(doc => {
+            if (!doc.exists) {
+              alert('Election not found');
+              return;
+            }
+
+            const electionData = doc.data();
+            
+            // Update current state
+            currentElectionId = electionId;
+            electionNameInput.value = electionData.electionName;
+            electionDateInput.value = electionData.electionDate;
+            reportingPercentageInput.value = electionData.reportingPercentage;
+            reportingPercentage = electionData.reportingPercentage;
+            candidates = electionData.candidates;
+            nextId = Math.max(...candidates.map(c => c.id)) + 1;
+            
+            // Update UI
+            updateDateDisplay();
+            updateReportingDisplay();
+            renderCandidates();
+            
+            // Switch to simulator tab
+            switchTab(simulatorTab, simulatorSection);
+          })
+          .catch(error => {
+            alert('Error loading election: ' + error.message);
+          });
+      }
+
+      // Delete an election
+      function deleteElection(electionId) {
+        if (!db) return;
+
+        if (!confirm('Are you sure you want to delete this election?')) {
+          return;
+        }
+
+        db.collection('elections').doc(electionId).delete()
+          .then(() => {
+            if (currentElectionId === electionId) {
+              resetSimulator();
+            }
+            loadUserElections();
+          })
+          .catch(error => {
+            alert('Error deleting election: ' + error.message);
+          });
+      }
+
+      // Reset simulator to default state
+      function resetSimulator() {
+        currentElectionId = null;
+        electionNameInput.value = 'U.S. Senate seat in New York';
+        electionDateInput.value = 'March 4';
+        reportingPercentageInput.value = '85';
+        reportingPercentage = 85;
+        candidates = [
+          { id: 1, name: 'John Doe', party: 'Liberal', votes: 4000000, incumbent: true, winner: false },
+          { id: 2, name: 'Jane Smith', party: 'Conventionalist', votes: 3000000, incumbent: false, winner: false },
+          { id: 3, name: 'Alex Johnson', party: 'Other', votes: 500000, incumbent: false, winner: false }
+        ];
+        nextId = 4;
+        showUI = true;
+        
+        updateDateDisplay();
+        updateReportingDisplay();
+        renderCandidates();
+      }
+
+      // Search elections
+      function searchElections() {
+        if (!db) {
+          searchResults.innerHTML = '<p>Search functionality requires Firebase configuration</p>';
+          return;
+        }
+
+        const query = searchInput.value.trim().toLowerCase();
+        if (!query) {
+          searchResults.innerHTML = '<p>Please enter a search term</p>';
+          return;
+        }
+
+        searchResults.innerHTML = '<p>Searching...</p>';
+
+        // Search for public elections matching the query
+        db.collection('elections')
+          .where('isPublic', '==', true)
+          .get()
+          .then(snapshot => {
+            if (snapshot.empty) {
+              searchResults.innerHTML = '<p>No public elections found</p>';
+              return;
+            }
+
+            const matches = [];
+            snapshot.forEach(doc => {
+              const election = doc.data();
+              
+              // Check if title, name or candidates match
+              const titleMatch = election.title.toLowerCase().includes(query);
+              const nameMatch = election.electionName.toLowerCase().includes(query);
+              const candidateMatch = election.candidates.some(c => c.name.toLowerCase().includes(query));
+              
+              if (titleMatch || nameMatch || candidateMatch) {
+                matches.push({ id: doc.id, ...election });
+              }
+            });
+
+            if (matches.length === 0) {
+              searchResults.innerHTML = '<p>No matching elections found</p>';
+              return;
+            }
+
+            searchResults.innerHTML = '';
+            matches.forEach(election => {
+              const resultItem = document.createElement('div');
+              resultItem.className = 'saved-election-item';
+              resultItem.innerHTML = `
+                <h3>${election.title}</h3>
+                <p>${election.electionName} - ${election.electionDate}</p>
+                <p>Created by: ${election.userEmail}</p>
+                <button class="btn btn-finalize" onclick="loadElection('${election.id}')">Open</button>
+              `;
+              searchResults.appendChild(resultItem);
+            });
+          })
+          .catch(error => {
+            searchResults.innerHTML = `<p>Error searching: ${error.message}</p>`;
+          });
+      }
+
+      // Tab switching
+      function switchTab(activeTab, activeSection) {
+        // Update tab styles
+        document.querySelectorAll('.tab').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        activeTab.classList.add('active');
+        
+        // Hide all sections
+        document.getElementById('simulator-section').style.display = 'none';
+        document.getElementById('library-section').style.display = 'none';
+        document.getElementById('search-section').style.display = 'none';
+        
+        // Show active section
+        activeSection.style.display = 'block';
+      }
+
       // Make functions available globally
       window.updateCandidate = updateCandidate;
       window.toggleWinner = toggleWinner;
       window.removeCandidate = removeCandidate;
+      window.loadElection = loadElection;
+      window.deleteElection = deleteElection;
     });
   </script>
 </body>
